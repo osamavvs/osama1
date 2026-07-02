@@ -19,7 +19,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # قراءة التوكن من متغيرات البيئة في Railway لضمان الأمان
-BOT_TOKEN = os.getenv("BOT_TOKEN")
+BOT_TOKEN = os.getenv("8721155986:AAHdipR_Xg6YUebhq_FWU3_oeHjyNdePT_c")
 
 if not BOT_TOKEN:
     print("❌ خطأ: يرجى إضافة BOT_TOKEN في إعدادات Variables على Railway")
