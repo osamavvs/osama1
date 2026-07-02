@@ -2,46 +2,16 @@ import telebot
 import requests
 import logging
 import sys
-import time
 import os
 from telebot.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
+import check  # استدعاء ملف الاشتراك
 
 # برمجة @U_K44
-# قناة ملفات بوتات مجانيه @BBABB9
-
-logging.basicConfig(
-    level=logging.ERROR,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[logging.StreamHandler(sys.stdout)]
-)
+logging.basicConfig(level=logging.ERROR, format='%(asctime)s - %(message)s', handlers=[logging.StreamHandler(sys.stdout)])
 logger = logging.getLogger(__name__)
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-
-if not BOT_TOKEN:
-    print("❌ خطأ: يرجى إضافة BOT_TOKEN في إعدادات Variables على Railway")
-    sys.exit(1)
-
 bot = telebot.TeleBot(BOT_TOKEN)
-
-# --- إعدادات الاشتراك الإجباري ---
-CHANNEL_ID = "@BBABB9" 
-
-def is_user_subscribed(user_id):
-    """التحقق من اشتراك المستخدم"""
-    try:
-        # ملاحظة: يجب أن يكون البوت مشرفاً في القناة
-        status = bot.get_chat_member(CHANNEL_ID, user_id).status
-        return status in ['member', 'administrator', 'creator']
-    except Exception as e:
-        logger.error(f"Subscription error: {e}")
-        return False
-
-def get_sub_markup():
-    """زر الاشتراك"""
-    markup = InlineKeyboardMarkup()
-    markup.add(InlineKeyboardButton(text="📢 اشترك في القناة لتفعيل البوت", url="https://t.me/BBABB9"))
-    return markup
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message: Message):
@@ -53,30 +23,21 @@ def send_welcome(message: Message):
 
 @bot.message_handler(func=lambda message: True)
 def handle_message(message: Message):
-    # تنفيذ فحص الاشتراك الإجباري
-    if not is_user_subscribed(message.from_user.id):
-        bot.reply_to(message, "❌ عذراً، يجب عليك الاشتراك في القناة أولاً لاستخدام البوت:", reply_markup=get_sub_markup())
+    # التحقق عبر الملف المنفصل
+    if not check.is_user_subscribed(bot, message.from_user.id):
+        bot.reply_to(message, "❌ عذراً، يجب عليك الاشتراك في القناة أولاً:", reply_markup=check.get_sub_markup())
         return
 
-    # منطق الرشق
     try:
         if not message.text.startswith(('http://', 'https://')):
-            bot.reply_to(message, "❌ الرجاء إرسال رابط صحيح يبدأ بـ http:// أو https://")
+            bot.reply_to(message, "❌ الرجاء إرسال رابط صحيح.")
             return
 
         link = message.text.strip()
         waiting_msg = bot.reply_to(message, "⏳ جاري معالجة طلبك...")
         
-        headers = {
-            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36',
-        }
-
-        json_data = {
-            'link': link,
-            'quantity': '50',
-            'provider_service_id': '10949',
-            'username': 'guest',
-        }
+        headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36'}
+        json_data = {'link': link, 'quantity': '50', 'provider_service_id': '10949', 'username': 'guest'}
 
         response = requests.post('https://test.socialfruit.co/api/gateway', headers=headers, json=json_data, timeout=30)
         
@@ -90,5 +51,4 @@ def handle_message(message: Message):
         bot.reply_to(message, "❌ حدث خطأ أثناء المعالجة.")
 
 if __name__ == "__main__":
-    print("🚀 البوت يعمل الآن...")
     bot.polling(none_stop=True)
