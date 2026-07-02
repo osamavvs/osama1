@@ -39,14 +39,15 @@ def check_subscription(user_id):
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message: Message):
-    # التحقق من الاشتراك أولاً عند ضغط Start
+    # تفعيل حفظ المستخدم للوحة الأدمن
+    admin_handler.save_user(message.from_user.id)
+    
     if not check_subscription(message.from_user.id):
         markup = InlineKeyboardMarkup()
         markup.add(InlineKeyboardButton(text="اضغط هنا للاشتراك 📢", url="https://t.me/BBABB9"))
         bot.reply_to(message, "❌ أهلاً بك! يجب عليك الاشتراك في القناة أولاً لاستخدام البوت:", reply_markup=markup)
         return
 
-    # رسالة الترحيب التي تظهر للمشتركين فقط
     markup = InlineKeyboardMarkup()
     markup.add(InlineKeyboardButton(text="قناة البوت 📢", url="https://t.me/BBABB9"))
     markup.add(InlineKeyboardButton(text="المطور 👨‍💻", url="https://t.me/U_K44"))
@@ -63,7 +64,6 @@ def send_dev_info(message: Message):
 
 @bot.message_handler(func=lambda message: True)
 def handle_message(message: Message):
-    # التحقق من الاشتراك الإجباري عند إرسال الرابط
     if not check_subscription(message.from_user.id):
         markup = InlineKeyboardMarkup()
         markup.add(InlineKeyboardButton(text="اضغط هنا للاشتراك 📢", url="https://t.me/BBABB9"))
@@ -78,14 +78,13 @@ def handle_message(message: Message):
         oosss44 = message.text.strip()
         waiting_msg = bot.reply_to(message, "⏳ جاري معالجة طلبك...")
         
-                headers = {
-            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36',
+        headers = {
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/127.0.0.0',
             'Referer': 'https://tgpanel.org/',
             'Origin': 'https://tgpanel.org/',
             'content-type': 'application/json',
             'Accept': 'application/json'
         }
-
 
         json_data = {
             'link': oosss44,
@@ -117,6 +116,7 @@ if __name__ == "__main__":
     print("🚀 البوت يعمل الآن...")
     while True:
         try:
+            bot.remove_webhook() # لمنع التضارب
             bot.polling(none_stop=True, interval=0, timeout=20)
         except Exception as e:
             time.sleep(5)
