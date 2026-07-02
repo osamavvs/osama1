@@ -36,7 +36,7 @@ def send_welcome(message: Message):
     markup = InlineKeyboardMarkup()
     markup.add(InlineKeyboardButton(text="قناة البوت 📢", url="https://t.me/BBABB9"))
     markup.add(InlineKeyboardButton(text="المطور 👨‍💻", url="https://t.me/U_K44"))
-    bot.reply_to(message, "مرحبا بك! أرسل رابط المنشور للرشق (200).", reply_markup=markup)
+    bot.reply_to(message, "مرحبا بك! أرسل رابط المنشور للرشق (ملاحظه عليك الانتصار بعد كل عمليه رشق 10 دقائق ).", reply_markup=markup)
 
 @bot.message_handler(commands=['admin'])
 def admin_panel(message):
