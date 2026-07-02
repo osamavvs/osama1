@@ -38,7 +38,14 @@ def check_subscription(user_id):
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message: Message):
-    # إضافة الأزرار
+    # التحقق من الاشتراك أولاً عند ضغط Start
+    if not check_subscription(message.from_user.id):
+        markup = InlineKeyboardMarkup()
+        markup.add(InlineKeyboardButton(text="اضغط هنا للاشتراك 📢", url="https://t.me/BBABB9"))
+        bot.reply_to(message, "❌ أهلاً بك! يجب عليك الاشتراك في القناة أولاً لاستخدام البوت:", reply_markup=markup)
+        return
+
+    # رسالة الترحيب التي تظهر للمشتركين فقط
     markup = InlineKeyboardMarkup()
     markup.add(InlineKeyboardButton(text="قناة البوت 📢", url="https://t.me/BBABB9"))
     markup.add(InlineKeyboardButton(text="المطور 👨‍💻", url="https://t.me/U_K44"))
@@ -55,9 +62,8 @@ def send_dev_info(message: Message):
 
 @bot.message_handler(func=lambda message: True)
 def handle_message(message: Message):
-    # التحقق من الاشتراك الإجباري
+    # التحقق من الاشتراك الإجباري عند إرسال الرابط
     if not check_subscription(message.from_user.id):
-        # إضافة زر الاشتراك في حالة عدم الاشتراك
         markup = InlineKeyboardMarkup()
         markup.add(InlineKeyboardButton(text="اضغط هنا للاشتراك 📢", url="https://t.me/BBABB9"))
         bot.reply_to(message, f"❌ عذراً، يجب عليك الاشتراك في القناة أولاً لاستخدام البوت:", reply_markup=markup)
