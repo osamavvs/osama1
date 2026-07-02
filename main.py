@@ -1,5 +1,4 @@
 import telebot
-import admin_handler
 import requests
 import logging
 import sys
@@ -39,9 +38,6 @@ def check_subscription(user_id):
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message: Message):
-    # تفعيل حفظ المستخدم للوحة الأدمن
-    admin_handler.save_user(message.from_user.id)
-    
     if not check_subscription(message.from_user.id):
         markup = InlineKeyboardMarkup()
         markup.add(InlineKeyboardButton(text="اضغط هنا للاشتراك 📢", url="https://t.me/BBABB9"))
@@ -57,33 +53,22 @@ def send_welcome(message: Message):
     welcome_text += "• أرسل لي رابط المنشور لإضافة تفاعلات."
     bot.reply_to(message, welcome_text, reply_markup=markup)
 
-@bot.message_handler(commands=['dev'])
-def send_dev_info(message: Message):
-    dev_text = "⚙️ **معلومات المطور:**\n• المطور: @U_K44\n• الأيدي: 8074717568\n• القناة: @BBABB9"
-    bot.reply_to(message, dev_text, parse_mode="Markdown")
-
 @bot.message_handler(func=lambda message: True)
 def handle_message(message: Message):
     if not check_subscription(message.from_user.id):
-        markup = InlineKeyboardMarkup()
-        markup.add(InlineKeyboardButton(text="اضغط هنا للاشتراك 📢", url="https://t.me/BBABB9"))
-        bot.reply_to(message, f"❌ عذراً، يجب عليك الاشتراك في القناة أولاً لاستخدام البوت:", reply_markup=markup)
         return
 
     try:
         if not message.text.startswith(('http://', 'https://')):
-            bot.reply_to(message, "❌ الرجاء إرسال رابط صحيح يبدأ بـ http:// أو https://")
+            bot.reply_to(message, "❌ الرجاء إرسال رابط صحيح.")
             return
 
         oosss44 = message.text.strip()
         waiting_msg = bot.reply_to(message, "⏳ جاري معالجة طلبك...")
         
         headers = {
-            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/127.0.0.0',
-            'Referer': 'https://tgpanel.org/',
-            'Origin': 'https://tgpanel.org/',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/145.0.0.0',
             'content-type': 'application/json',
-            'Accept': 'application/json'
         }
 
         json_data = {
@@ -96,28 +81,19 @@ def handle_message(message: Message):
         response = requests.post('https://test.socialfruit.co/api/gateway', headers=headers, json=json_data, timeout=30)
         
         if "success" in response.text.lower():
-            bot.edit_message_text(
-                "✅ تم بنجاح إضافة التفاعلات", 
-                chat_id=message.chat.id, 
-                message_id=waiting_msg.message_id
-            )
+            bot.edit_message_text("✅ تم بنجاح إضافة التفاعلات", chat_id=message.chat.id, message_id=waiting_msg.message_id)
         else:
-            bot.edit_message_text(
-                "❌ فشلت العملية. الرجاء المحاولة مرة أخرى.", 
-                chat_id=message.chat.id, 
-                message_id=waiting_msg.message_id
-            )
+            bot.edit_message_text("❌ فشلت العملية. الرجاء المحاولة مرة أخرى.", chat_id=message.chat.id, message_id=waiting_msg.message_id)
                 
     except Exception as e:
         logger.error(f"Error: {e}")
         bot.reply_to(message, "❌ حدث خطأ أثناء المعالجة.")
 
 if __name__ == "__main__":
-    print("🚀 البوت يعمل الآن...")
     while True:
         try:
-            bot.remove_webhook() # لمنع التضارب
+            bot.remove_webhook()
             bot.polling(none_stop=True, interval=0, timeout=20)
-        except Exception as e:
+        except Exception:
             time.sleep(5)
             continue
