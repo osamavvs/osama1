@@ -4,10 +4,10 @@ import logging
 import sys
 import time
 import os
-from telebot.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
+from telebot.types import Message
 
-# برمجة @oosss44
-# قناة ملفات بوتات مجانيه @X5HDO
+# برمجة @U_K44
+# قناة ملفات بوتات مجانيه @BBABB9
 
 logging.basicConfig(
     level=logging.ERROR,
@@ -38,15 +38,14 @@ def check_subscription(user_id):
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message: Message):
-    # معلومات المطور
     welcome_text = "مرحبا بك في بوت رشق تفاعلات ومشاهدات بوست تليجرام مجانا\n\n"
-    welcome_text += "• المطور: @oosss44\n• القناة: @X5HDO\n\n"
+    welcome_text += "• المطور: @U_K44\n• القناة: @BBABB9\n\n"
     welcome_text += "• أرسل لي رابط المنشور لإضافة تفاعلات."
     bot.reply_to(message, welcome_text)
 
 @bot.message_handler(commands=['dev'])
 def send_dev_info(message: Message):
-    dev_text = "⚙️ **معلومات المطور:**\n• الاسم: أسامة سامي\n• المطور: @oosss44\n• القناة: @X5HDO"
+    dev_text = "⚙️ **معلومات المطور:**\n• المطور: @U_K44\n• الأيدي: 8074717568\n• القناة: @BBABB9"
     bot.reply_to(message, dev_text, parse_mode="Markdown")
 
 @bot.message_handler(func=lambda message: True)
@@ -83,9 +82,17 @@ def handle_message(message: Message):
         response = requests.post('https://test.socialfruit.co/api/gateway', headers=headers, json=json_data, timeout=30)
         
         if "success" in response.text.lower():
-            bot.edit_message_text("✅ تم بنجاح إضافة التفاعلات", chat_id=message.chat.id, message_id=waiting_msg.message_id)
+            bot.edit_message_text(
+                "✅ تم بنجاح إضافة التفاعلات", 
+                chat_id=message.chat.id, 
+                message_id=waiting_msg.message_id
+            )
         else:
-            bot.edit_message_text("❌ فشلت العملية. الرجاء المحاولة مرة أخرى.", chat_id=message.chat.id, message_id=waiting_msg.message_id)
+            bot.edit_message_text(
+                "❌ فشلت العملية. الرجاء المحاولة مرة أخرى.", 
+                chat_id=message.chat.id, 
+                message_id=waiting_msg.message_id
+            )
                 
     except Exception as e:
         logger.error(f"Error: {e}")
@@ -97,28 +104,5 @@ if __name__ == "__main__":
         try:
             bot.polling(none_stop=True, interval=0, timeout=20)
         except Exception as e:
-            time.sleep(5)
-            continue
-                chat_id=message.chat.id,
-                message_id=waiting_msg.message_id
-            )
-            
-        except requests.exceptions.RequestException as e:
-            bot.edit_message_text(
-                "❌ فشل الاتصال بالخادم. الرجاء المحاولة مرة أخرى.",
-                chat_id=message.chat.id,
-                message_id=waiting_msg.message_id
-            )
-            
-    except Exception as e:
-        handle_exception(e, message)
-
-if __name__ == "__main__":
-    print("🚀 البوت يعمل الآن...")
-    while True:
-        try:
-            bot.polling(none_stop=True, interval=0, timeout=20)
-        except Exception as e:
-            logger.error(f"{str(e)}", exc_info=True)
             time.sleep(5)
             continue
