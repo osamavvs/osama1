@@ -78,14 +78,14 @@ def handle_message(message: Message):
         oosss44 = message.text.strip()
         waiting_msg = bot.reply_to(message, "⏳ جاري معالجة طلبك...")
         
-        headers = {
-            'accept': 'application/json, text/javascript, */*; q=0.01',
-            'accept-language': 'ar',
+                headers = {
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36',
+            'Referer': 'https://tgpanel.org/',
+            'Origin': 'https://tgpanel.org/',
             'content-type': 'application/json',
-            'origin': 'https://tgpanel.org',
-            'referer': 'https://tgpanel.org/',
-            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/145.0.0.0',
+            'Accept': 'application/json'
         }
+
 
         json_data = {
             'link': oosss44,
