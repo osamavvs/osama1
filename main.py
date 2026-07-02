@@ -4,7 +4,7 @@ import logging
 import sys
 import time
 import os
-from telebot.types import Message
+from telebot.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 
 # برمجة @U_K44
 # قناة ملفات بوتات مجانيه @BBABB9
@@ -38,10 +38,19 @@ def check_subscription(user_id):
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message: Message):
-    welcome_text = "مرحبا بك في بوت رشق تفاعلات ومشاهدات بوست تليجرام مجانا\n\n"
-    welcome_text += "• المطور: @U_K44\n• القناة: @BBABB9\n\n"
+    welcome_text = "مرحبا بك في بوت رشق تفاعلات ومشاهدات بوست تليجرام مجانا 🚀\n\n"
     welcome_text += "• أرسل لي رابط المنشور لإضافة تفاعلات."
-    bot.reply_to(message, welcome_text)
+    
+    # إنشاء أزرار الإنلاين (معلومات المطور والقناة)
+    markup = InlineKeyboardMarkup()
+    btn_channel = InlineKeyboardButton(text="قناة البوت 📢", url="https://t.me/BBABB9")
+    btn_dev = InlineKeyboardButton(text="المطور 👨‍💻", url="https://t.me/U_K44")
+    
+    # إضافة الأزرار (كل زر في سطر، أو يمكنك وضع markup.add(btn_channel, btn_dev) ليكونوا بجانب بعض)
+    markup.add(btn_channel)
+    markup.add(btn_dev)
+
+    bot.reply_to(message, welcome_text, reply_markup=markup)
 
 @bot.message_handler(commands=['dev'])
 def send_dev_info(message: Message):
@@ -50,9 +59,13 @@ def send_dev_info(message: Message):
 
 @bot.message_handler(func=lambda message: True)
 def handle_message(message: Message):
-    # التحقق من الاشتراك الإجباري
+    # التحقق من الاشتراك الإجباري مع زر إنلاين
     if not check_subscription(message.from_user.id):
-        bot.reply_to(message, f"❌ عذراً، يجب عليك الاشتراك في القناة أولاً لاستخدام البوت:\n{CHANNEL_ID}")
+        markup = InlineKeyboardMarkup()
+        btn_sub = InlineKeyboardButton(text="اضغط هنا للاشتراك 📢", url="https://t.me/BBABB9")
+        markup.add(btn_sub)
+        
+        bot.reply_to(message, "❌ عذراً، يجب عليك الاشتراك في القناة أولاً لاستخدام البوت.", reply_markup=markup)
         return
 
     try:
