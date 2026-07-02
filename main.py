@@ -3,6 +3,7 @@ import requests
 import logging
 import sys
 import time
+import os
 from telebot.types import Message
 
 # برمجة @oosss44
@@ -17,7 +18,13 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-BOT_TOKEN = "00000"
+# قراءة التوكن من متغيرات البيئة في Railway لضمان الأمان
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+
+if not BOT_TOKEN:
+    print("❌ خطأ: يرجى إضافة BOT_TOKEN في إعدادات Variables على Railway")
+    sys.exit(1)
+
 bot = telebot.TeleBot(BOT_TOKEN)
 
 def handle_exception(exception, message=None):
@@ -30,18 +37,12 @@ def handle_exception(exception, message=None):
         except:
             pass
 
-# برمجة @oosss44
-# قناة ملفات بوتات مجانيه @X5HDO
-
 @bot.message_handler(commands=['start'])
 def send_welcome(message: Message):
     try:
         bot.reply_to(message, "مرحبا بك في بوت رشق تفاعلات ومشاهدات بوست تليجرام مجانا \n\n• أرسل لي رابط المنشور لإضافة تفاعلات.")
     except Exception as e:
         handle_exception(e, message)
-
-# برمجة @oosss44
-# قناة ملفات بوتات مجانيه @X5HDO
 
 @bot.message_handler(func=lambda message: True)
 def handle_message(message: Message):
@@ -97,7 +98,6 @@ def handle_message(message: Message):
                     message_id=waiting_msg.message_id
                 )
             else:
-                error_detail = response.text[:200]
                 bot.edit_message_text(
                     f"❌ فشلت العملية. الرجاء المحاولة مرة أخرى.",
                     chat_id=message.chat.id,
@@ -111,7 +111,6 @@ def handle_message(message: Message):
                 chat_id=message.chat.id,
                 message_id=waiting_msg.message_id
             )
-            logger.error(f"{oosss44}")
             
         except requests.exceptions.RequestException as e:
             bot.edit_message_text(
@@ -119,17 +118,12 @@ def handle_message(message: Message):
                 chat_id=message.chat.id,
                 message_id=waiting_msg.message_id
             )
-            logger.error(f"{str(e)}")
             
     except Exception as e:
         handle_exception(e, message)
 
-# برمجة @oosss44
-# قناة ملفات بوتات مجانيه @X5HDO
-
 if __name__ == "__main__":
     print("🚀 البوت يعمل الآن...")
-    
     while True:
         try:
             bot.polling(none_stop=True, interval=0, timeout=20)
